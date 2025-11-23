@@ -34,16 +34,15 @@ export function Form2() {
   }  
   
   return (
-    <div className="min-h-screen flex justify-center items-center  ">
-    <form  onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-3 gap-4 mx-auto " > 
-      
+    <div className="min-h-screen flex justify-center items-center bg-blue-100  ">
+    <form  onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-3 gap-4 mx-auto " >       
         <FormInput
           name="FirstName"          
           control={form.control}
           label="First Name"
           placeholder="User Name"
           Icon={<FiUser size={"20"} className="text-gray-500 " />}
-          className="w-full py-4 pl-10 border border-gray-200 rounded-2xl placeholder-gray-500"
+          className="w-full py-4 pl-10 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
           
         />
         <FormInput
@@ -52,7 +51,7 @@ export function Form2() {
           label="Middle Name"
           placeholder="User Name"
           Icon={<FiUser size={"20"} className="text-gray-500 " />}
-          className="w-full py-4 pl-10 border border-gray-200 rounded-2xl placeholder-gray-500"
+          className="w-full py-4 pl-10 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
           
         />
         <FormInput
@@ -61,7 +60,7 @@ export function Form2() {
           label="Last Name"
           placeholder="User Name"
           Icon={<FiUser size={"20"} className="text-gray-500 " />}
-          className="w-full py-4 pl-10 border border-gray-200 rounded-2xl placeholder-gray-500"
+          className="w-full py-4 pl-10 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
           
         />
         <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
@@ -70,7 +69,7 @@ export function Form2() {
             label="Social Security Number"
             control={form.control}            
             placeholder="456-67-9997"
-            className="w-full py-4 pl-4 border border-gray-200 rounded-2xl placeholder-gray-500"
+            className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
 
             <FormInput
@@ -79,7 +78,7 @@ export function Form2() {
             label="Date of Birth"
             control={form.control}
             placeholder="YYYY-MM-DD"                        
-            className="w-full py-4 pl-4 border border-gray-200 rounded-2xl placeholder-gray-500"
+            className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
         </div>
         <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
@@ -88,7 +87,7 @@ export function Form2() {
             label="DoD ID Number"
             control={form.control}            
             placeholder="12345690"
-            className="w-full py-4 pl-4 border border-gray-200 rounded-2xl placeholder-gray-500"
+            className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
 
             <FormInput
@@ -96,7 +95,7 @@ export function Form2() {
             label="VA File Number "
             control={form.control}
             placeholder="C1234567"                        
-            className="w-full py-4 pl-4 border border-gray-200 rounded-2xl placeholder-gray-500"
+            className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
         </div>    
         <div className="col-span-3">
@@ -104,7 +103,7 @@ export function Form2() {
             name="MilitaryBranch"
             control={form.control}
             label="Military Branch"
-            className="w-full py-4 pl-5 border border-gray-200 text-gray-500 rounded-2xl"
+            className="w-full py-4 pl-5 border border-gray-200 bg-white text-gray-500 rounded-2xl"
             placeholder="Select"
             options={[
               { label: "x", value: "x" },
@@ -133,7 +132,7 @@ export function Form2() {
               control={form.control}
               label="Please explain why"
               placeholder="Type reason here"
-              className="w-full py-4 pl-4 border border-gray-200 rounded-2xl placeholder-gray-500"
+              className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
           </div>
         )}
