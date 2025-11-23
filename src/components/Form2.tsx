@@ -8,8 +8,8 @@ import { FiUser } from "react-icons/fi"
 import { FormRadio } from "./FormRadio"
 
 const formSchema = z
-  .object({    
-    phoneNumber: z.string().regex(/^\?\d{10,15}$/, "Phone number must be 10-15 digits"),
+  .object({  
+    
     FirstName: z.string().min(3, "First Name must be at least 3 characters"),
     MiddleName: z.string().optional(),
     LastName: z.string().min(1, "Last Name is required"),
@@ -24,14 +24,25 @@ const formSchema = z
 
 export function Form2() {
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),    
+    resolver: zodResolver(formSchema), 
+    defaultValues:{
+        FirstName:"FirstName",
+        MiddleName:"MiddleName",
+        LastName:"LastName",
+        SocialSecurityNumber: "123-45-6789",
+        DateOfBirth: "1995-01-25",
+        DoDIDNumber: "12345678",
+        VAFileNumber: "C1234567",
+        MilitaryBranch: "x",
+        MedicalRecords: "yes",
+    }   
   })
-
   const watchMedicalRecords = form.watch("MedicalRecords")
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data)
   }  
+  console.log(form.getValues())
   
   return (
     <div className="min-h-screen flex justify-center items-center bg-blue-100  ">
@@ -66,7 +77,7 @@ export function Form2() {
         <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
             <FormInput
             name="SocialSecurityNumber"
-            label="Social Security Number"
+            label="Social Security Number"            
             control={form.control}            
             placeholder="456-67-9997"
             className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
@@ -84,8 +95,9 @@ export function Form2() {
         <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
             <FormInput
             name="DoDIDNumber"
+            type="Number"
             label="DoD ID Number"
-            control={form.control}            
+            control={form.control}                                
             placeholder="12345690"
             className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
@@ -135,9 +147,7 @@ export function Form2() {
               className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
           </div>
-        )}
-         
-              
+        )}          
         <div className="col-span-2 flex justify-center mt-4">
           <Button type="submit" className="py-6 px-50 rounded-2xl">
             Signup
