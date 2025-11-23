@@ -15,15 +15,25 @@ interface SelectProps {
   placeholder?: string
   className?: string
   icon?: React.ReactNode
+  label?:string
 }
 
-export function Select({ name, control, options, placeholder, className, icon }: SelectProps) {
+export function Select({ name,label, control, options, placeholder, className, icon }: SelectProps) {
+  const inputId = `${name}-input`
   return (
     <Controller
       name={name}
       control={control}
       render={({ field , fieldState }) => (
         <div>
+          {label && (
+            <label 
+            htmlFor={inputId}             
+              className="block mb-1 text-gray-700 font-medium"
+            >
+              {label}
+            </label>
+          )}
         <div className="relative w-full">
           {icon && <div className="absolute top-1/2 left-3 -translate-y-1/2">{icon}</div>}
           <select

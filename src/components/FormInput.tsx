@@ -8,6 +8,7 @@ interface FormInputProps {
   name: string
   control: any
   type?: string
+  label?: string  
   placeholder?: string
   className?: string
   Icon?: React.ReactNode
@@ -15,16 +16,24 @@ interface FormInputProps {
   Icon2?:React.ReactNode
 }
 
-export function FormInput({ name, control, type = "text", placeholder, className, Icon,countryCode,Icon2 }: FormInputProps) {
+export function FormInput({ name, control, type = "text", placeholder, label,  className, Icon,countryCode,Icon2 }: FormInputProps) {
   const [showPassword, setShowPassword] = React.useState(false)
   const isPassword = type === "password"
-  
+  const inputId = `${name}-input`
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
         <div>
+          {label && (
+            <label 
+            htmlFor={inputId}             
+              className="block mb-1 text-gray-700 font-medium"
+            >
+              {label}
+            </label>
+          )}
           <div className="relative w-full">
             
             {Icon && (

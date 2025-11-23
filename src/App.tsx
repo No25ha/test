@@ -1,12 +1,12 @@
-import { Form} from "@/components/Form";
-//import {Form1} from "@/components/test"
+//import { Form} from "@/components/Form";
+import {Form2} from "@/components/Form2"
 
 
 
 const App = () => {
   return (
     <div>
-      <Form/>      
+      <Form2/>      
     </div>
   )
 }

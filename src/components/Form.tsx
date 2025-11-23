@@ -47,7 +47,7 @@ export function Form() {
       
         <FormInput
           name="OfficeName"
-          control={form.control}
+          control={form.control}          
           placeholder="Office Name"
           Icon={<FiUser size={"20"} className="text-gray-500 " />}
           className="w-full py-4 pl-10 border border-gray-200 rounded-2xl placeholder-gray-500"
