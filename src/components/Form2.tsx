@@ -6,10 +6,10 @@ import { FormInput } from "@/components/FormInput"
 import {Select} from "@/components/Select"
 import { FiUser } from "react-icons/fi"
 import { FormRadio } from "./FormRadio"
+import { useState } from "react"
 
 const formSchema = z
-  .object({  
-    
+  .object({     
     FirstName: z.string().min(3, "First Name must be at least 3 characters"),
     MiddleName: z.string().optional(),
     LastName: z.string().min(1, "Last Name is required"),
@@ -18,35 +18,48 @@ const formSchema = z
     DoDIDNumber: z.string().min(8, "DoD ID Number is required").regex(/^\d+$/, "DoD ID Number must contain 8 numbers"),
     VAFileNumber: z.string().min(8, "VA File Number is required"),
     MilitaryBranch: z.string().min(1, "Military Branch is required"),
-    MedicalRecords: z.string().min(1, "Please select an option"),
-    
+    MedicalRecords: z.string().min(1, "Please select an option"),    
   })  
 
 export function Form2() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema), 
     defaultValues:{
-        FirstName:"FirstName",
-        MiddleName:"MiddleName",
-        LastName:"LastName",
-        SocialSecurityNumber: "123-45-6789",
-        DateOfBirth: "1995-01-25",
-        DoDIDNumber: "12345678",
-        VAFileNumber: "C1234567",
-        MilitaryBranch: "x",
+        FirstName:"",
+        MiddleName:"",
+        LastName:"",
+        SocialSecurityNumber: "",
+        DateOfBirth: "",
+        DoDIDNumber: "",
+        VAFileNumber: "",
+        MilitaryBranch: "",
         MedicalRecords: "yes",
     }   
   })
   const watchMedicalRecords = form.watch("MedicalRecords")
+  const [part1,setpart1]= useState(true);
+  const [part2,setpart2]= useState(false);
+  
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data)
   }  
   console.log(form.getValues())
+  //console.log(form.formState.errors)
+  
+   async function OpenPart2(){
+    const isvalid= await form.trigger(["FirstName","LastName","MiddleName","SocialSecurityNumber","DateOfBirth"]);
+    if(isvalid){
+      setpart1(false)
+      setpart2(true)
+    }
+  }
   
   return (
     <div className="min-h-screen flex justify-center items-center bg-blue-100  ">
-    <form  onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-3 gap-4 mx-auto " >       
+    <form  onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-3 gap-4  mx-auto " > 
+    {part1 &&( 
+      < >    
         <FormInput
           name="FirstName"          
           control={form.control}
@@ -92,7 +105,17 @@ export function Form2() {
             className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
         </div>
-        <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
+        <div className="col-span-2 flex justify-center mt-4">
+              <Button className="py-6 px-50 rounded-2xl" onClick={OpenPart2}>
+                Next
+              </Button>
+            </div>
+        </>
+)}
+
+        {part2 &&(
+          <>
+          <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
             <FormInput
             name="DoDIDNumber"
             type="Number"
@@ -101,7 +124,6 @@ export function Form2() {
             placeholder="12345690"
             className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
-
             <FormInput
             name="VAFileNumber "
             label="VA File Number "
@@ -109,50 +131,52 @@ export function Form2() {
             placeholder="C1234567"                        
             className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
-        </div>    
-        <div className="col-span-3">
-          <Select
-            name="MilitaryBranch"
-            control={form.control}
-            label="Military Branch"
-            className="w-full py-4 pl-5 border border-gray-200 bg-white text-gray-500 rounded-2xl"
-            placeholder="Select"
-            options={[
-              { label: "x", value: "x" },
-              { label: "y", value: "y" },
-              { label: "z", value: "z" },
-            ]}
-          />
-        </div> 
-        <div className="col-span-3">
-            <FormRadio
-                name="MedicalRecords"
+            </div>    
+            <div className="col-span-3">
+              <Select
+                name="MilitaryBranch"
                 control={form.control}
-                label="Do you have your medical records"
+                label="Military Branch"
+                className="w-full py-4 pl-5 border border-gray-200 bg-white text-gray-500 rounded-2xl"
+                placeholder="Select"
                 options={[
-                    { label: "yes", value: "yes" },
-                    { label: "No", value: "No" },
-                    
+                  { label: "x", value: "x" },
+                  { label: "y", value: "y" },
+                  { label: "z", value: "z" },
                 ]}
-                className="col-span-3"
-            />            
-        </div>
-        {watchMedicalRecords === "No" && (
-          <div className="col-span-3 mt-2">
-            <FormInput
-              name="ReasonForNo"
-              control={form.control}
-              label="Please explain why"
-              placeholder="Type reason here"
-              className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
-            />
-          </div>
-        )}          
-        <div className="col-span-2 flex justify-center mt-4">
-          <Button type="submit" className="py-6 px-50 rounded-2xl">
-            Signup
-          </Button>
-        </div>       
+              />
+            </div> 
+            <div className="col-span-3">
+                <FormRadio
+                    name="MedicalRecords"
+                    control={form.control}
+                    label="Do you have your medical records"
+                    options={[
+                        { label: "yes", value: "yes" },
+                        { label: "No", value: "No" },
+                        
+                    ]}
+                    className="col-span-3"
+                />            
+            </div>
+            {watchMedicalRecords === "No" && (
+              <div className="col-span-3 mt-2">
+                <FormInput
+                  name="ReasonForNo"
+                  control={form.control}
+                  label="Please explain why"
+                  placeholder="Type reason here"
+                  className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                />
+              </div>
+            )}          
+            <div className="col-span-2 flex justify-center mt-4">
+              <Button type="submit" className="py-6 px-50 rounded-2xl">
+                Signup
+              </Button>
+            </div>
+            </> 
+      )}       
 </form>
          
 </div>
