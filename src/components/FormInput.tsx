@@ -51,7 +51,8 @@ export function FormInput({ name, control, type = "text", placeholder, label,  c
             <input
               {...field}
               type={isPassword ? (showPassword ? "text" : "password") : type}
-              placeholder={placeholder}             
+              placeholder={placeholder} 
+              value={field.value ?? ""}            
               className={cn(
                 "",
                 className,

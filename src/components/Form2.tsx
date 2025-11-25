@@ -7,6 +7,7 @@ import {Select} from "@/components/Select"
 import { FiUser } from "react-icons/fi"
 import { FormRadio } from "./FormRadio"
 import { useState } from "react"
+import { MdCreditCard } from "react-icons/md"
 
 const formSchema = z
   .object({     
@@ -16,11 +17,15 @@ const formSchema = z
     SocialSecurityNumber: z.string().min(5, "SSN is required").regex(/^[0-9-]+$/, "DoD ID Number must contain only numbers and '-'"),
     DateOfBirth: z.string().min(1, "Date of Birth is required"),
     DoDIDNumber: z.string().min(8, "DoD ID Number is required").regex(/^\d+$/, "DoD ID Number must contain 8 numbers"),
-    VAFileNumber: z.string().min(8, "VA File Number is required"),
+    VAFileNumber: z.string().nonempty("VA File Number is required"),
     MilitaryBranch: z.string().min(1, "Military Branch is required"),
-    MedicalRecords: z.string().min(1, "Please select an option"),    
+    MedicalRecords: z.string().min(1, "Please select an option"), 
+    CardHolderName: z.string().nonempty("Card Name is required"),
+    CardNumber: z.string().regex(/^\d{16}$/, "Card Number must be 16 digits"),
+    ExpirationDate: z.string().nonempty("Expiration Date is required"),
+    CVV: z.string().regex(/^\d{3}$/, "CVV must be 3 digits"),
+    ZipCode: z.string().min(3,"ZipCode is required"),   
   })  
-
 export function Form2() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema), 
@@ -34,27 +39,72 @@ export function Form2() {
         VAFileNumber: "",
         MilitaryBranch: "",
         MedicalRecords: "yes",
+        CardHolderName:"",
+        CardNumber:"",
+        ExpirationDate:"",
+        CVV:"",
+        ZipCode:""
     }   
   })
   const watchMedicalRecords = form.watch("MedicalRecords")
+  const watchDateOfBirth = form.watch("DateOfBirth")
   const [part1,setpart1]= useState(true);
   const [part2,setpart2]= useState(false);
+  const [part3,setpart3]= useState(false);
   
-
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data)
-  }  
-  console.log(form.getValues())
-  //console.log(form.formState.errors)
-  
-   async function OpenPart2(){
+  function Age(date:string){
+      const today = new Date();
+      const birthDate = new Date(date);  
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();  
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+  }
+  const age = Age(watchDateOfBirth);
+  async function OpenPart2(age:number){
     const isvalid= await form.trigger(["FirstName","LastName","MiddleName","SocialSecurityNumber","DateOfBirth"]);
-    if(isvalid){
+    if(isvalid && age > 18){
       setpart1(false)
       setpart2(true)
     }
+    else if(isvalid && age < 18){
+      setpart1(false)
+      setpart3(true)
+    }
+  }
+  async function OpenPart3(){
+    const isvalid= await form.trigger(["CardHolderName","CardNumber","ExpirationDate","CVV","ZipCode"]);
+    if(isvalid){
+      setpart2(false)
+      setpart3(true)
+    }
+  }
+  function BackPart1(){
+    setpart1(true)
+    setpart2(false)
+  }
+
+  function BackPart2(age:number){
+    if(age > 18){
+      setpart2(true)
+      setpart3(false)
+    }
+    else if(age < 18){
+      setpart1(true)
+      setpart3(false)
+    }    
   }
   
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log(data);
+    //form.reset();
+  }  
+  console.log(form.getValues())
+  console.log(form.formState.errors)
+
   return (
     <div className="min-h-screen flex justify-center items-center bg-blue-100  ">
     <form  onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-3 gap-4  mx-auto " > 
@@ -106,14 +156,68 @@ export function Form2() {
             />
         </div>
         <div className="col-span-2 flex justify-center mt-4">
-              <Button className="py-6 px-50 rounded-2xl" onClick={OpenPart2}>
+              <Button className="py-6 px-50 rounded-2xl" onClick={()=>OpenPart2(age!)}>
                 Next
-              </Button>
+              </Button>              
             </div>
         </>
 )}
+        {part2 &&( 
+              < >    
+                <FormInput
+                    name="CardHolderName"
+                    control={form.control}
+                    label="Card Holder Name"
+                    placeholder="John Doe"
+                    Icon={<FiUser size={20} className="text-gray-500" />}
+                    className="w-full py-4 pl-10 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  />
+                <FormInput
+                    name="CardNumber"
+                    control={form.control}
+                    label="Card Number"
+                    placeholder="1234 5678 9012 3456"
+                    Icon={<MdCreditCard size={20} className="text-gray-500" />}
+                    className="w-full py-4 pl-10 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  />
+                
+                <div className="col-span-3 ">
+                  <FormInput
+                    name="ExpirationDate"
+                    control={form.control}
+                    label="Expiration Date"
+                    placeholder="MM/YY"
+                    className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  />
 
-        {part2 &&(
+                  <FormInput
+                    name="CVV"
+                    control={form.control}
+                    label="CVV"
+                    placeholder="123"
+                    className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  />
+                </div>
+                <div className="col-span-3 ">
+                <FormInput
+                    name="ZipCode"
+                    control={form.control}
+                    label="ZIP Code"
+                    placeholder="12345"
+                    className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  />
+                  </div>
+                <div className="col-span-3 flex gap-3 mt-4">
+                    <Button className="py-6 px-40 rounded-2xl" onClick={BackPart1}>              
+                      Bake                
+                    </Button>
+                    <Button className="py-6 px-40 rounded-2xl" onClick={OpenPart3}>
+                      Next
+                    </Button>
+                </div>
+                </>
+        )}
+        {part3 &&(
           <>
           <div className="col-span-3 grid grid-cols-2 gap-6 w-full">
             <FormInput
@@ -125,7 +229,7 @@ export function Form2() {
             className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
             <FormInput
-            name="VAFileNumber "
+            name="VAFileNumber"            
             label="VA File Number "
             control={form.control}
             placeholder="C1234567"                        
@@ -170,15 +274,17 @@ export function Form2() {
                 />
               </div>
             )}          
-            <div className="col-span-2 flex justify-center mt-4">
-              <Button type="submit" className="py-6 px-50 rounded-2xl">
+            <div className="col-span-3 flex gap-3 mt-4">
+              <Button className="py-6 px-40 rounded-2xl"onClick={()=>BackPart2(age!)}>              
+                Back                
+              </Button>
+              <Button type="submit" className="py-6 px-40 rounded-2xl">
                 Signup
               </Button>
             </div>
             </> 
       )}       
-</form>
-         
+</form>         
 </div>
   )
 }
