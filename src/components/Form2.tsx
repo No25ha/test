@@ -8,7 +8,7 @@ import { FiUser } from "react-icons/fi"
 import { FormRadio } from "./FormRadio"
 import { useState } from "react"
 import { MdCreditCard } from "react-icons/md"
-
+const ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/png"];
 const formSchema = z
   .object({     
     FirstName: z.string().min(3, "First Name must be at least 3 characters"),
@@ -24,7 +24,10 @@ const formSchema = z
     CardNumber: z.string().regex(/^\d{16}$/, "Card Number must be 16 digits"),
     ExpirationDate: z.string().nonempty("Expiration Date is required"),
     CVV: z.string().regex(/^\d{3}$/, "CVV must be 3 digits"),
-    ZipCode: z.string().min(3,"ZipCode is required"),   
+    ZipCode: z.string().min(3,"ZipCode is required"),     
+    Image:z.any().refine((file) => file?.size <= 2*1024*1024, `Max image size is 2MB.`).refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      ".jpg,.png formats are supported.") 
   })  
 export function Form2() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,7 +46,8 @@ export function Form2() {
         CardNumber:"",
         ExpirationDate:"",
         CVV:"",
-        ZipCode:""
+        ZipCode:"",
+        Image:""
     }   
   })
   const watchMedicalRecords = form.watch("MedicalRecords")
@@ -53,6 +57,7 @@ export function Form2() {
   const [part3,setpart3]= useState(false);
   
   function Age(date:string){
+    
       const today = new Date();
       const birthDate = new Date(date);  
       let age = today.getFullYear() - birthDate.getFullYear();
@@ -75,7 +80,7 @@ export function Form2() {
     }
   }
   async function OpenPart3(){
-    const isvalid= await form.trigger(["CardHolderName","CardNumber","ExpirationDate","CVV","ZipCode"]);
+    const isvalid= await form.trigger(["CardHolderName","CardNumber","ExpirationDate","CVV","ZipCode" ,"Image"]);
     if(isvalid){
       setpart2(false)
       setpart3(true)
@@ -204,6 +209,15 @@ export function Form2() {
                     control={form.control}
                     label="ZIP Code"
                     placeholder="12345"
+                    className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  />
+                  </div>
+                  <div className="col-span-3 ">
+                <FormInput
+                    name="Image"
+                    type="file"
+                    control={form.control}
+                    label="Image"                    
                     className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
                   />
                   </div>
