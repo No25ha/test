@@ -14,9 +14,11 @@ interface FormInputProps {
   Icon?: React.ReactNode
   countryCode?:string
   Icon2?:React.ReactNode
+  onchange?: (e: React.ChangeEvent<HTMLInputElement>) => void 
+  
 }
 
-export function FormInput({ name, control, type = "text", placeholder, label,  className, Icon,countryCode,Icon2 }: FormInputProps) {
+export function FormInput({ name, control, type = "text", placeholder, label,  className, Icon,countryCode,Icon2,  onchange }: FormInputProps) {
   const [showPassword, setShowPassword] = React.useState(false)
   const isPassword = type === "password"
   const inputId = `${name}-input`
@@ -52,7 +54,11 @@ export function FormInput({ name, control, type = "text", placeholder, label,  c
               {...field}
               type={isPassword ? (showPassword ? "text" : "password") : type}
               placeholder={placeholder} 
-              value={field.value ?? ""}            
+              value={field.value ?? ""} 
+              onChange={(e) => {
+                field.onChange(e); 
+                onchange?.(e);     
+              }}                         
               className={cn(
                 "",
                 className,
