@@ -21,7 +21,7 @@ const formSchema = z
     MilitaryBranch: z.string().min(1, "Military Branch is required"),
     MedicalRecords: z.string().min(1, "Please select an option"), 
     CardHolderName: z.string().nonempty("Card Name is required"),
-    CardNumber: z.string().regex(/^\d{16}$/, "Card Number must be 16 digits"),
+    CardNumber: z.string().nonempty("Card Number must be 16 digits"),
     ExpirationDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Expiration date must be in MM/YY format").refine((val) => {
       const [monthStr, yearStr] = val.split("/");
       const month = Number(monthStr);
@@ -182,10 +182,17 @@ export function Form2() {
                   />
                 <FormInput
                     name="CardNumber"
-                    type="Number"
+                    type="text"
                     control={form.control}
                     label="Card Number"
                     placeholder="1234 5678 9012 3456"
+                    onchange={(e) => {
+                      let value = e.target.value.replace(/[^0-9]/g, "");    
+                      value = value
+                        .replace(/(.{4})/g, "$1 ")                        
+                        .slice(0, 19); 
+                      form.setValue("CardNumber", value);
+                    }}
                     Icon={<MdCreditCard size={20} className="text-gray-500" />}
                     className="w-full py-4 pl-10 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
                   />
@@ -197,15 +204,15 @@ export function Form2() {
                     control={form.control}
                     label="Expiration Date"                    
                     placeholder="MM/YY"
-                    onchange={(e) => {     
-                      let value = e.target.value.replace(/[^0-9/]/g, "");   
-                      if (value.length === 2 && !value.includes("/")) {
-                        value = value + "/";
-                      }                         
-                      form.setValue("ExpirationDate", value);
-                    }}
-                    className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
-                  />
+                    onchange={(e) => {
+                        let value = e.target.value.replace(/[^0-9]/g, "");    
+                        value = value
+                          .replace(/^(\d{2})(\d{2})/, "$1/$2")                                                
+                          .slice(0, 5); 
+                        form.setValue("ExpirationDate", value);
+                      }}
+                      className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                    />
 
                   <FormInput
                     name="CVV"
@@ -213,6 +220,12 @@ export function Form2() {
                     control={form.control}
                     label="CVV"
                     placeholder="123"
+                    onchange={(e) => {
+                        let value = e.target.value.replace(/[^0-9]/g, "");    
+                        value = value                                                                          
+                          .slice(0, 3); 
+                        form.setValue("CVV", value);
+                      }}
                     className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
                   />
                 </div>
@@ -222,21 +235,27 @@ export function Form2() {
                     type="Number"
                     control={form.control}
                     label="ZIP Code"
-                    placeholder="12345"
+                    placeholder="12345"                    
+                    onchange={(e) => {
+                        let value = e.target.value.replace(/[^0-9]/g, "");    
+                        value = value                                                                          
+                          .slice(0, 5); 
+                        form.setValue("ZipCode", value);
+                      }}
                     className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
                   />
                   </div>
                   <div className="col-span-3 ">
-                <FileInput
-                    name="Image"
-                    control={form.control}                    
-                    placeholder="Upload Image"
-                    className="w-full py-2 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
+                  <FileInput
+                      name="Image"
+                      control={form.control}                    
+                      placeholder="Upload Image"
+                      className="w-full py-2 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
                   />
                   </div>
                 <div className="col-span-3 flex gap-3 mt-4">
                     <Button className="py-6 px-40 rounded-2xl" onClick={handleBackStep}>              
-                      Bake                
+                      Back                
                     </Button>
                     <Button className="py-6 px-40 rounded-2xl" onClick={handleNextStep}>
                       Next
@@ -251,7 +270,13 @@ export function Form2() {
               name="DoDIDNumber"
               type="Number"
               label="DoD ID Number"
-              control={form.control}                                
+              control={form.control} 
+              onchange={(e) => {
+                        let value = e.target.value.replace(/[^0-9]/g, "");    
+                        value = value                                                                          
+                          .slice(0, 8); 
+                        form.setValue("DoDIDNumber", value);
+                      }}                               
               placeholder="12345690"
               className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
@@ -259,7 +284,14 @@ export function Form2() {
               name="VAFileNumber"            
               label="VA File Number "
               control={form.control}
-              placeholder="C1234567"                        
+              placeholder="C1234567"
+              onchange={(e) => {
+                        let value = e.target.value;    
+                        value = value[0].toUpperCase().replace(/[^A-Z]/g, "") + value.slice(1).replace(/[^0-9]/g, "")
+                        .slice(0,7);                                           
+                        
+                        form.setValue("VAFileNumber", value);
+                      }}                          
               className="w-full py-4 pl-4 border border-gray-200 bg-white rounded-2xl placeholder-gray-500"
             />
             </div>    
