@@ -56,7 +56,7 @@ export function Form2() {
   })
   const watchMedicalRecords = form.watch("MedicalRecords")
   const watchDateOfBirth = form.watch("DateOfBirth")
-   const [currentStep, setCurrentStep] = useState(1);  
+  const [currentStep, setCurrentStep] = useState(1);  
   
   function Age(date:string){    
       const today = new Date();

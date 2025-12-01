@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { PhoneInputGroup } from "./PhoneInput";
-
 const formSchema = z.object({
   phones: z
     .array(
@@ -14,7 +13,6 @@ const formSchema = z.object({
     )
     .min(1, "At least one phone number is required"),
 });
-
 export function Form3() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -24,7 +22,7 @@ export function Form3() {
   });
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
-  }
+  }  
   return (
     <div className="min-h-screen flex justify-center items-center">
       <form
